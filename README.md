@@ -4,7 +4,6 @@
 ![](scan1.png)
 ![](scan2.png)
 
----
 
 This is a collection of images of a 2000x2100mm FarmBot after a harvest.
 
