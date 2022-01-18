@@ -1,16 +1,41 @@
+#!/usr/bin/env python3
+
+'''
+3D point cloud viewer
+
+see README.md for usage
+'''
+
 import open3d as o3d
 
-# use `1` and `4` on keyboard to switch between color views while in viewer
 # comment out filenames below as desired for comparison
-
 filenames = [
-    'tof.xyzrgb', # (blue) time of flight sensor values
-    'v2.xyzrgb',  # (red) v2 dataset z coordinates
-    'msh.xyzrgb', # (green) Measure Soil Height chosen surface heights
+    'tof.xyzrgb',
+    'v2.xyzrgb',
+    'msh.xyzrgb',
 ]
 
-vis = o3d.visualization.Visualizer()
+vis = o3d.visualization.VisualizerWithKeyCallback()
 vis.create_window()
+
+def set_view(key):
+    'Change to top or front view.'
+    def _view(vis):
+        ctr = vis.get_view_control()
+        front = {'front': [0, -1, 0], 'side': [1, 0, 0], 'top': [0, 0, 1]}
+        up = [0, 1, 0] if key == 'top' else [0, 0, 1]
+        ctr.set_front(front[key])
+        ctr.set_up(up)
+    return _view
+
+key_callbacks = {
+    ord('F'): set_view('front'),
+    ord('G'): set_view('side'),
+    ord('U'): set_view('top'),
+}
+
+for key, callback in key_callbacks.items():
+    vis.register_key_callback(key, callback)
 
 for filename in filenames:
     pcd = o3d.io.read_point_cloud(filename)
